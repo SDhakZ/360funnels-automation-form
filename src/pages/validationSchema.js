@@ -1,67 +1,79 @@
-import * as yup from "yup";
+import Yup from "yup";
+const isLikelyValidUrl = (value) => {
+  if (!value || typeof value !== "string") return false;
+  let candidate = value.trim();
+  // If no scheme, assume https
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(candidate)) {
+    candidate = "https://" + candidate;
+  }
+  try {
+    const url = new URL(candidate);
+    // Basic hostname sanity: must have a dot and at least 2 chars in TLD-ish part
+    const host = url.hostname;
+    if (!host.includes(".")) return false;
+    const parts = host.split(".");
+    const tld = parts[parts.length - 1];
+    if (tld.length < 2) return false; // reject something like "localhost" unless you want to allow it
+    return true;
+  } catch {
+    return false;
+  }
+};
 
-const hexColorRegex = /^#([0-9A-F]{3}){1,2}$/i;
-
-export const step1Schema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Email is required"),
-
-  brandName: yup.string().required("Brand name is required"),
-
-  phone: yup.string().required("Phone number is required"),
-
-  storeUrl: yup
-    .string()
-    .url("Must be a valid URL")
-    .required("Shopify store URL is required"),
-
-  brandBook: yup
-    .mixed()
-    .required("Brand book is required")
-    .test("fileSize", "File too large", (file) =>
-      file ? file.size <= 50 * 1024 * 1024 : false
+export const step1ValidationSchema = Yup.object().shape({
+  email: Yup.string().trim().email("Invalid email").required("Required"),
+  brandName: Yup.string().trim().required("Required"),
+  phone: Yup.string().trim().required("Required"),
+  storeUrl: Yup.string()
+    .trim()
+    .required("Required")
+    .test("is-valid-url", "Invalid URL", (v) => isLikelyValidUrl(v)),
+  brandBook: Yup.mixed()
+    .test(
+      "fileType",
+      "Only PDF, images allowed",
+      (file) =>
+        !file ||
+        (file &&
+          ["application/pdf", "image/jpeg", "image/png"].includes(file.type))
     )
-    .test("fileType", "Unsupported file type", (file) =>
-      file
-        ? [
-            "application/pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "image/png",
-            "image/jpeg",
-            "image/webp",
-          ].includes(file.type)
-        : false
+    .test(
+      "fileSize",
+      "Max 50MB allowed",
+      (file) => !file || (file && file.size <= 50 * 1024 * 1024)
     ),
-
-  // Font Preferences
-  primaryFont: yup.string().required("Primary font is required"),
-
-  secondaryFont: yup.string().required("Secondary font is required"),
-
-  additionalFonts: yup.string().notRequired(),
-
-  // Color Preferences
-  primaryColor: yup
-    .string()
-    .matches(hexColorRegex, "Must be a valid HEX color")
-    .required("Primary color is required"),
-
-  secondaryColor: yup
-    .string()
-    .matches(hexColorRegex, "Must be a valid HEX color")
-    .required("Secondary color is required"),
-
-  otherColors: yup.string().notRequired(),
-
-  thirdPartyCheckutApps: yup.string().notRequired(),
-
-  maxDiscount: yup
-    .string()
-    .required("Max discount is required")
-    .matches(/^\d+%?$/, "Must be a number or percentage, e.g. 10 or 10%"),
-
-  brandPotrayal: yup
-    .string()
-    .required("Brand portrayal description is required"),
+  primaryFont: Yup.string().trim().required("Required"),
+  secondaryFont: Yup.string().trim().required("Required"),
+  primaryColor: Yup.string().trim().required("Required"),
+  secondaryColor: Yup.string().trim().required("Required"),
+  otherColors: Yup.string().trim().notRequired(),
+  thirdPartyCheckutApps: Yup.string().trim().notRequired(),
+  maxDiscount: Yup.string().trim().required("Required"),
+  brandPotrayal: Yup.string().trim().required("Required"),
 });
 
-export const step2Schema = yup.object().shape({});
+export const step2ValidationSchema = Yup.object().shape({
+  bestSellingProducts: Yup.array()
+    .of(Yup.string().required())
+    .min(1, "At least one product is required")
+    .max(5, "Maximum 5 products allowed")
+    .required(),
+  productsWantToSell: Yup.array().of(Yup.string()).max(5),
+  releaseFrequency: Yup.string().required("Required"),
+  additionalNotes: Yup.string(),
+  ageRange: Yup.string().required("Required"),
+  gender: Yup.string().required("Required"),
+  painPoints: Yup.string().required("Required"),
+  biggestFear: Yup.string().required("Required"),
+  customerStory: Yup.string(),
+  brandAdvantages: Yup.string().required("Required"),
+  brandProblems: Yup.string(),
+  brandFAQs: Yup.string(),
+  brandCompetitors: Yup.string(),
+});
+
+export const step3ValidationSchema = Yup.object().shape({
+  shippingInfo: Yup.string().required("Required"),
+  adLibraryLink: Yup.string().url("Invalid URL").required("Required"),
+  extraNotes: Yup.string(),
+});

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setStep, updateField } from "../../features/formSlice";
 import Stepper from "./Stepper";
@@ -7,32 +7,61 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { step1Schema, step2Schema } from "../validationSchema";
+import {
+  step1ValidationSchema,
+  step2ValidationSchema,
+  step3ValidationSchema,
+} from "../validationSchema";
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
   const { step, step1, step2, step3 } = useSelector((s) => s.form);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = React.useState({});
 
   const handleFieldChange = (stepKey, field, value) => {
     dispatch(updateField({ stepKey, field, value }));
-    setErrors((prev) => ({ ...prev, [field]: "" })); // clear on type
+    setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  const validateStep = async () => {
-    try {
-      const schema = step === 1 ? step1Schema : step === 2 ? step2Schema : null;
-      if (!schema) return true;
+  // compute allowedStep based on validity of prior steps
+  const allowedStep = React.useMemo(() => {
+    const isStep1Valid = step1ValidationSchema.isValidSync(step1);
+    const isStep2Valid = step2ValidationSchema.isValidSync(step2);
+    if (isStep1Valid && isStep2Valid) return 3;
+    if (isStep1Valid) return 2;
+    return 1;
+  }, [step1, step2]);
 
-      const data = step === 1 ? step1 : step2;
-      await schema.validate(data, { abortEarly: false });
+  const validateStep = async () => {
+    const schemas = {
+      1: step1ValidationSchema,
+      2: step2ValidationSchema,
+      3: step3ValidationSchema,
+    };
+    const stepData = {
+      1: step1,
+      2: step2,
+      3: step3,
+    };
+
+    const currentSchema = schemas[step];
+    const currentData = stepData[step];
+
+    if (!currentSchema) return true;
+
+    try {
+      await currentSchema.validate(currentData, { abortEarly: false });
       setErrors({});
       return true;
     } catch (err) {
       const errorMap = {};
-      err.inner.forEach((e) => {
-        errorMap[e.path] = e.message;
-      });
+      if (err.inner) {
+        err.inner.forEach((e) => {
+          errorMap[e.path] = e.message;
+        });
+      } else if (err.path) {
+        errorMap[err.path] = err.message;
+      }
       setErrors(errorMap);
       return false;
     }
@@ -45,7 +74,10 @@ export default function MultiStepFormWithRedux() {
 
   const back = () => dispatch(setStep(step - 1));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // final validation of last step
+    const isValid = await validateStep();
+    if (!isValid) return;
     console.log("SUBMITTING FULL FORM", { step1, step2, step3 });
     alert("Submitted!");
   };
@@ -54,8 +86,10 @@ export default function MultiStepFormWithRedux() {
     <div className="max-w-[628px] p-8 mx-auto space-y-6">
       <Stepper
         currentStep={step}
-        onSelect={(n) => dispatch(setStep(n))}
-        allowedStep={3}
+        onSelect={(n) => {
+          if (n <= allowedStep) dispatch(setStep(n));
+        }}
+        allowedStep={allowedStep}
       />
 
       <div className="relative min-h-[300px]">
@@ -101,6 +135,7 @@ export default function MultiStepFormWithRedux() {
               <Step3
                 data={step3}
                 onChange={(f, v) => handleFieldChange("step3", f, v)}
+                errors={errors}
               />
             </motion.div>
           )}
