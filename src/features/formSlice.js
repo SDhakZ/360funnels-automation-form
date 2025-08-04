@@ -11,7 +11,7 @@ const initialState = {
     countryCode: "", // e.g. 'us'
     dialCode: "", // e.g. '1'
     countryName: "",
-    storeUrl: "",
+    shopifyStoreUrl: "",
     brandBook: null,
     primaryFont: "",
     secondaryFont: "",
