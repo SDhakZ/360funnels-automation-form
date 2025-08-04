@@ -25,24 +25,24 @@ export const step1ValidationSchema = Yup.object().shape({
   email: Yup.string().trim().email("Invalid email").required("Required"),
   brandName: Yup.string().trim().required("Required"),
   phone: Yup.string().trim().required("Required"),
-  storeUrl: Yup.string()
+  shopifyStoreUrl: Yup.string()
     .trim()
     .required("Required")
     .test("is-valid-url", "Invalid URL", (v) => isLikelyValidUrl(v)),
   brandBook: Yup.mixed()
     .test(
-      "fileType",
-      "Only PDF, images allowed",
-      (file) =>
-        !file ||
-        (file &&
-          ["application/pdf", "image/jpeg", "image/png"].includes(file.type))
+      "fileFormatAndSize",
+      "Only PDF, JPG, PNG allowed and max size 50MB",
+      (file) => {
+        if (!file) return true; // allow empty (optional)
+        const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+        const isValidType = allowedTypes.includes(file.type);
+        const isValidSize = file.size <= 50 * 1024 * 1024;
+        return isValidType && isValidSize;
+      }
     )
-    .test(
-      "fileSize",
-      "Max 50MB allowed",
-      (file) => !file || (file && file.size <= 50 * 1024 * 1024)
-    ),
+    .notRequired(),
+
   primaryFont: Yup.string().trim().required("Required"),
   secondaryFont: Yup.string().trim().required("Required"),
   primaryColor: Yup.string().trim().required("Required"),
