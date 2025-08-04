@@ -10,7 +10,7 @@ export default function ColorPreferencesSection({
 
   const renderColorInput = (name, label, error) => (
     <div className="w-full space-y-1">
-      <label htmlFor={name} className="text-base font-medium text-gray-800">
+      <label htmlFor={name} className="text-sm font-medium text-gray-800">
         {label}
       </label>
       <div className="relative">
@@ -25,7 +25,7 @@ export default function ColorPreferencesSection({
           placeholder="#FFFFFF"
           value={data[name] || ""}
           onChange={handleChange}
-          className={`w-full px-10 py-[10px] mt-1 text-base rounded-md placeholder:text-slate-400 ${
+          className={`w-full px-10 py-[10px] mt-1 text-sm rounded-md placeholder:text-slate-400 ${
             error ? "border-red-500 outline-red-500" : ""
           }`}
         />
@@ -51,7 +51,7 @@ export default function ColorPreferencesSection({
       <div className="space-y-1">
         <label
           htmlFor="otherColors"
-          className="text-base font-medium text-gray-800"
+          className="text-sm font-medium text-gray-800"
         >
           Other brand colors (optional)
         </label>
@@ -60,7 +60,7 @@ export default function ColorPreferencesSection({
           id="otherColors"
           name="otherColors"
           placeholder="If you use other colors feel free to list them here"
-          className={`w-full px-4 py-[10px] mt-1 text-base rounded-md placeholder:text-slate-400 ${
+          className={`w-full px-4 py-[10px] mt-1 text-sm rounded-md placeholder:text-slate-400 ${
             errors.otherColors ? "border-red-500" : "border-slate-300"
           }`}
           rows={3}

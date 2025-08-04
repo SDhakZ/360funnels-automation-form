@@ -10,7 +10,7 @@ export default function Step1({ data, onChange, errors = {} }) {
   };
 
   const wrapClass = (errorKey) =>
-    `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-7 ${
+    `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-6 ${
       errors[errorKey] ? "outline-red-500" : "outline-slate-300"
     }`;
 

@@ -1,4 +1,5 @@
-import Yup from "yup";
+import * as Yup from "yup";
+
 const isLikelyValidUrl = (value) => {
   if (!value || typeof value !== "string") return false;
   let candidate = value.trim();

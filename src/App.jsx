@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import MultiStepForm from "./pages/components/multiStepForm";
+import MultiStepForm from "./pages/form/multiStepForm";
 import Onboarding from "./pages/onboarding";
 
 config.autoAddCss = false;

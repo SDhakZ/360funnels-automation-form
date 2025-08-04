@@ -43,7 +43,7 @@ export default function FileUploadField({
 
   return (
     <div className="flex flex-col w-full gap-2">
-      <label className="text-base font-medium text-gray-800">{label}</label>
+      <label className="text-sm font-medium text-gray-800">{label}</label>
 
       <div
         {...getRootProps()}

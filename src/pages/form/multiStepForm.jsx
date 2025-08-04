@@ -11,7 +11,7 @@ import {
   step1ValidationSchema,
   step2ValidationSchema,
   step3ValidationSchema,
-} from "../validationSchema";
+} from "./validationSchema";
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();

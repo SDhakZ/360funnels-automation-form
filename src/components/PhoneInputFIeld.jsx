@@ -11,7 +11,7 @@ export default function PhoneInputField({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-base font-medium text-gray-800">{label} *</label>
+      <label className="text-sm font-medium text-gray-800">{label} *</label>
       <PhoneInput
         country={country}
         value={value}

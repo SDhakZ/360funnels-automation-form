@@ -38,7 +38,7 @@ export default function ListInput({
 
   return (
     <div className="w-full space-y-2">
-      <label className="text-base font-medium text-gray-800">
+      <label className="text-sm font-medium text-gray-800">
         {label} {reqired && "*"}
       </label>
 
@@ -67,7 +67,7 @@ export default function ListInput({
             placeholder={placeholder}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full max-w-[300px] px-4 py-[10px] mt-1 text-base rounded-md placeholder:text-slate-400"
+            className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1 text-base rounded-md placeholder:text-slate-400"
           />
           <Button
             type="button"
