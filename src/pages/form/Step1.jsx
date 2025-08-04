@@ -8,9 +8,6 @@ export default function Step1({ data, onChange, errors = {} }) {
   const handleChange = (field, value) => {
     onChange(field, value);
   };
-  const handlePhoneChange = (field, value) => {
-    onChange(field, value);
-  };
 
   const wrapClass = (errorKey) =>
     `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-6 ${
@@ -58,15 +55,15 @@ export default function Step1({ data, onChange, errors = {} }) {
         />
       </div>
 
-      <div className={wrapClass("storeUrl")}>
+      <div className={wrapClass("shopifyStoreUrl")}>
         <InputField
-          name="storeUrl"
+          name="shopifyStoreUrl"
           label="Shopify store URL"
           type="url"
           placeholder="Enter your shopify store URL"
-          value={data.storeUrl || ""}
+          value={data.shopifyStoreUrl || ""}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.storeUrl}
+          error={errors.shopifyStoreUrl}
           required
         />
       </div>
