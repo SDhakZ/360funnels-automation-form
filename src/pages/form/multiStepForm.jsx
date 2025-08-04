@@ -12,6 +12,7 @@ import {
   step2ValidationSchema,
   step3ValidationSchema,
 } from "./validationSchema";
+import { submitOnboardingForm } from "@/thunk/formThunk";
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
@@ -78,8 +79,17 @@ export default function MultiStepFormWithRedux() {
     // final validation of last step
     const isValid = await validateStep();
     if (!isValid) return;
-    console.log("SUBMITTING FULL FORM", { step1, step2, step3 });
-    alert("Submitted!");
+    dispatch(submitOnboardingForm({ step1, step2, step3 }))
+      .unwrap()
+      .then((res) => {
+        console.log("Success:", res);
+        alert("Form submitted successfully!");
+        // Optionally reset form
+      })
+      .catch((err) => {
+        console.error("Submission error:", err);
+        alert("There was an error submitting the form.");
+      });
   };
 
   return (

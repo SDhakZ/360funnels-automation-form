@@ -15,7 +15,14 @@ export default function PhoneInputField({
       <PhoneInput
         country={country}
         value={value}
-        onChange={onChange}
+        onChange={(phone, countryData) => {
+          onChange({
+            phone,
+            countryCode: countryData.countryCode, // e.g. 'us'
+            dialCode: countryData.dialCode, // e.g. '1'
+            name: countryData.name, // e.g. 'United States'
+          });
+        }}
         inputStyle={{
           width: "100%",
           height: "42px",

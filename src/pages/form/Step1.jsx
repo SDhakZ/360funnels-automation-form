@@ -8,6 +8,9 @@ export default function Step1({ data, onChange, errors = {} }) {
   const handleChange = (field, value) => {
     onChange(field, value);
   };
+  const handlePhoneChange = (field, value) => {
+    onChange(field, value);
+  };
 
   const wrapClass = (errorKey) =>
     `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-6 ${
@@ -44,7 +47,13 @@ export default function Step1({ data, onChange, errors = {} }) {
       <div className={wrapClass("phone")}>
         <PhoneInputField
           value={data.phone || ""}
-          onChange={(value) => handleChange("phone", value)}
+          country={data.countryCode || "us"}
+          onChange={(valueObj) => {
+            handleChange("phone", valueObj.phone);
+            handleChange("countryCode", valueObj.countryCode);
+            handleChange("dialCode", valueObj.dialCode);
+            handleChange("countryName", valueObj.name);
+          }}
           error={errors.phone}
         />
       </div>
@@ -113,7 +122,7 @@ export default function Step1({ data, onChange, errors = {} }) {
       <div className={wrapClass("maxDiscount")}>
         <InputField
           name="maxDiscount"
-          label="Max % discount that you're willing to offer *"
+          label="Max % discount that you're willing to offer"
           type="text"
           placeholder="e.g. 10%"
           value={data.maxDiscount || ""}
@@ -126,7 +135,7 @@ export default function Step1({ data, onChange, errors = {} }) {
       <div className={wrapClass("brandPotrayal")}>
         <InputField
           name="brandPotrayal"
-          label="Words to describe the way you want your brand to be portrayed? *"
+          label="Words to describe the way you want your brand to be portrayed?"
           type="text"
           placeholder="e.g. casual, funny, relatable, luxury…"
           value={data.brandPotrayal || ""}

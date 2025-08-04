@@ -20,9 +20,12 @@ export default function Onboarding() {
           </p>
         </div>
 
-        <button className="px-6 py-4 mt-4 text-lg font-semibold text-white transition-colors rounded-lg bg-slate-800 hover:bg-slate-700">
+        <a
+          href="/form"
+          className="flex items-center justify-center px-6 py-4 mt-4 text-lg font-semibold text-white transition-colors rounded-lg bg-slate-800 hover:bg-slate-700"
+        >
           Lets get started
-        </button>
+        </a>
       </div>
     </div>
   );

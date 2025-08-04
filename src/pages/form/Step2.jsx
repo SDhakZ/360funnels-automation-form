@@ -56,12 +56,12 @@ export default function Step2({ data, onChange, errors = {} }) {
           required
         />
         <InputField
-          name="additionalNotes"
+          name="realeaseFrequencyAdditionalNotes"
           label="Additional notes"
           placeholder="Enter any additional notes here"
-          value={data.additionalNotes || ""}
+          value={data.realeaseFrequencyAdditionalNotes || ""}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.additionalNotes}
+          error={errors.realeaseFrequencyAdditionalNotes}
           type="textarea"
         />
       </div>

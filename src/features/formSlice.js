@@ -1,25 +1,47 @@
 // app/redux/formSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-
+import { submitOnboardingForm } from "@/thunk/formThunk";
 const initialState = {
   step: 1,
+  loading: false,
   step1: {
     email: "",
     brandName: "",
-    countryCode: "",
     phone: "",
+    countryCode: "", // e.g. 'us'
+    dialCode: "", // e.g. '1'
+    countryName: "",
     storeUrl: "",
-  },
-  step2: {
+    brandBook: null,
     primaryFont: "",
     secondaryFont: "",
+    additionalFonts: "",
     primaryColor: "",
     secondaryColor: "",
+    otherColors: "",
+    thirdPartyCheckutApps: "",
+    maxDiscount: "",
+    brandPotrayal: "",
+  },
+  step2: {
+    bestSellingProducts: [],
+    productsWantToSell: [],
+    releaseFrequency: "",
+    realeaseFrequencyAdditionalNotes: "",
+    ageRange: "",
+    gender: "",
+    painPoints: "",
+    biggestFear: "",
+    customerStory: "",
+    brandAdvantages: "",
+    brandProblems: "",
+    brandFAQs: "",
+    brandCompetitors: "",
   },
   step3: {
-    checkoutApps: "",
-    maxDiscount: "",
-    brandWords: "",
+    shippingInfo: "",
+    adLibraryLink: "",
+    extraNotes: "",
   },
 };
 
@@ -44,6 +66,20 @@ const formSlice = createSlice({
       // for restoring from localStorage
       return { ...state, ...action.payload };
     },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(submitOnboardingForm.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(submitOnboardingForm.fulfilled, (state) => {
+        Object.assign(state, initialState);
+        state.loading = false;
+      })
+      .addCase(submitOnboardingForm.rejected, (state) => {
+        state.loading = false;
+      });
   },
 });
 

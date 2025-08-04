@@ -61,7 +61,7 @@ export const step2ValidationSchema = Yup.object().shape({
     .required(),
   productsWantToSell: Yup.array().of(Yup.string()).max(5),
   releaseFrequency: Yup.string().required("Required"),
-  additionalNotes: Yup.string(),
+  realeaseFrequencyAdditionalNotes: Yup.string(),
   ageRange: Yup.string().required("Required"),
   gender: Yup.string().required("Required"),
   painPoints: Yup.string().required("Required"),

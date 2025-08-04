@@ -67,7 +67,7 @@ export default function ListInput({
             placeholder={placeholder}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1 text-base rounded-md placeholder:text-slate-400"
+            className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1  rounded-md placeholder:text-slate-400"
           />
           <Button
             type="button"
