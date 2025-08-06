@@ -10,7 +10,7 @@ const steps = [
 // add prop allowedStep (highest step allowed to click)
 export default function Stepper({ currentStep, onSelect, allowedStep }) {
   return (
-    <div className="flex items-center justify-between w-full max-w-[628px] p-4 mx-auto bg-white border border-slate-300 rounded-md">
+    <div className="flex items-center justify-between w-full max-w-[628px] p-5 mx-auto bg-white border border-slate-300 rounded-md">
       {steps.map((title, index) => {
         const stepNumber = index + 1;
         const isActive = currentStep === stepNumber;
