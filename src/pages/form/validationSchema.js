@@ -30,8 +30,6 @@ export const step1ValidationSchema = Yup.object().shape({
     .required("Required")
     .test("is-valid-url", "Invalid URL", (v) => isLikelyValidUrl(v)),
   brandBookId: Yup.string().nullable(),
-  brandBookName: Yup.string().trim().nullable(),
-
   primaryFont: Yup.string().trim().required("Required"),
   secondaryFont: Yup.string().trim().required("Required"),
   primaryColor: Yup.string().trim().required("Required"),

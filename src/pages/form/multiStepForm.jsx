@@ -8,29 +8,75 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import {
   step1ValidationSchema,
   step2ValidationSchema,
   step3ValidationSchema,
 } from "./validationSchema";
 import { submitOnboardingForm } from "@/thunk/formThunk";
-import ThankYou from "../../components/ThankYou";
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const brandBookRef = React.useRef([]);
   const { step, step1, step2, step3 } = useSelector((s) => s.form);
   const [errors, setErrors] = React.useState({});
-  const [submitted, setSubmitted] = React.useState(false);
-  const [lastBrandName, setLastBrandName] = React.useState("");
   const submissionLoading = useSelector((s) => s.form.loading);
+
+  const brandAssetsRef = React.useRef([]);
 
   const handleFieldChange = (stepKey, field, value) => {
     dispatch(updateField({ stepKey, field, value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  // compute allowedStep based on validity of prior steps
+  const handleBrandBookSelect = (files) => {
+    const list = Array.isArray(files) ? files : files ? [files] : [];
+    if (!list.length) return;
+
+    const keyOf = (f) => `${f.name}|${f.size}|${f.lastModified}`;
+    const existing = brandBookRef.current;
+    const seen = new Set(existing.map((p) => keyOf(p.file)));
+
+    const additions = list
+      .filter((f) => !seen.has(keyOf(f)))
+      .map((f) => ({
+        id: crypto?.randomUUID?.() ?? `${Date.now()}-${f.name}`,
+        file: f,
+      }));
+
+    brandBookRef.current = [...existing, ...additions];
+
+    const meta = [
+      ...(step1.brandBookMeta || []),
+      ...additions.map(({ id, file }) => ({
+        id,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      })),
+    ];
+    dispatch(
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta })
+    );
+  };
+
+  const handleRemoveBrandBook = (id) => {
+    brandBookRef.current = brandBookRef.current.filter((p) => p.id !== id);
+    const meta = (step1.brandBookMeta || []).filter((m) => m.id !== id);
+    dispatch(
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta })
+    );
+  };
+
+  const handleClearBrandBooks = () => {
+    brandBookRef.current = [];
+    dispatch(
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: [] })
+    );
+  };
+
   const allowedStep = React.useMemo(() => {
     const isStep1Valid = step1ValidationSchema.isValidSync(step1);
     const isStep2Valid = step2ValidationSchema.isValidSync(step2);
@@ -76,60 +122,31 @@ export default function MultiStepFormWithRedux() {
   const back = () => dispatch(setStep(step - 1));
 
   const handleSubmit = async () => {
-    // validate current step as you already do
     const isValid = await validateStep();
     if (!isValid) return;
 
     const capturedBrandName = step1?.brandName || "";
+    const files = brandBookRef.current.map((p) => p.file);
 
     dispatch(
-      submitOnboardingForm({
-        step1,
-        step2,
-        step3 /*, brandBookFile if you use ref */,
-      })
+      submitOnboardingForm({ step1, step2, step3, brandBookFiles: files })
     )
       .unwrap()
       .then((res) => {
-        // Prefer a stable ID key from your API response
         const id = res?.submissionId || res?.id || res?.data?.id || "";
         navigate("/thank-you", {
           replace: true,
-          state: {
-            brandName: capturedBrandName,
-            submissionId: id,
-          },
+          state: { brandName: capturedBrandName, submissionId: id },
         });
       })
       .catch((err) => {
-        console.error("Submission error:", err);
-        alert("There was an error submitting the form."); // or render a toast
+        console.error(err);
+        alert("There was an error submitting the form.");
       });
   };
 
-  // Optional: navigation action for ThankYou
-  const handleRestart = () => {
-    dispatch(reset());
-    setSubmitted(false);
-    // Move user to step 1 explicitly
-    dispatch(setStep(1));
-  };
-
-  const handleBackHome = () => {
-    // If you have routing, navigate to dashboard/home:
-    // navigate("/dashboard") or router.push("/dashboard");
-    // Fallback: just restart form
-    handleRestart();
-  };
-
-  // ✅ Show ThankYou page after success
-  if (submitted) {
-    return <ThankYou brandName={lastBrandName} onRestart={handleRestart} />;
-  }
-
-  // Default: show the form
   return (
-    <div className="max-w-[628px] p-8 mx-auto space-y-6">
+    <div className="mx-auto max-w-[628px] space-y-6 p-8">
       <Stepper
         currentStep={step}
         onSelect={(n) => {
@@ -152,6 +169,9 @@ export default function MultiStepFormWithRedux() {
                 data={step1}
                 onChange={(f, v) => handleFieldChange("step1", f, v)}
                 errors={errors}
+                onSelectBrandBook={handleBrandBookSelect} // ⬅ wire up
+                onRemoveBrandBook={handleRemoveBrandBook} // ⬅ delete one
+                onClearBrandBooks={handleClearBrandBooks} // ⬅ clear all
               />
             </motion.div>
           )}

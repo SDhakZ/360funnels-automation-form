@@ -13,10 +13,8 @@ const initialState = {
     dialCode: "",
     countryName: "",
     shopifyStoreUrl: "",
-
     brandBookId: null,
-    brandBookName: "",
-
+    brandAssetsMeta: [],
     primaryFont: "",
     secondaryFont: "",
     additionalFonts: "",

@@ -3,12 +3,15 @@ import PhoneInputField from "@/components/PhoneInputFIeld";
 import FileUploadField from "@/components/FileUploadField";
 import FontPreferencesSection from "@/components/FontPreferenceSection";
 import ColorPreferencesSection from "@/components/ColorPreferencesSection";
-
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 export default function Step1({
   data,
   onChange,
   errors = {},
   onSelectBrandBook,
+  onRemoveBrandBook,
+  onClearBrandBooks,
 }) {
   const handleChange = (field, value) => {
     onChange(field, value);
@@ -18,6 +21,10 @@ export default function Step1({
     `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-6 ${
       errors[errorKey] ? "outline-red-500" : "outline-slate-300"
     }`;
+  const items = data?.brandBookMeta || [];
+  const selectedLabel = items.length
+    ? `${items.length} file(s) selected`
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -75,15 +82,53 @@ export default function Step1({
 
       <div className={wrapClass("brandBook")}>
         <FileUploadField
-          label="Brand Book"
+          label="Brand book / assets"
           error={errors.brandBook}
           onFileSelect={onSelectBrandBook}
+          multiple
+          selectedLabel={selectedLabel}
         />
-        {data.brandBookName ? (
-          <p className="mt-2 text-sm text-slate-600">
-            Selected: {data.brandBookName}
-          </p>
-        ) : null}
+
+        {items.length > 0 && (
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-slate-600">Selected files</p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onClearBrandBooks}
+              >
+                Clear all
+              </Button>
+            </div>
+
+            <ul className="border divide-y rounded-md">
+              {items.map((m) => (
+                <li
+                  key={m.id}
+                  className="flex items-center justify-between px-3 py-2 text-sm"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{m.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {(m.size / 1024).toFixed(0)} KB • {m.type || "file"}
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600"
+                    onClick={() => onRemoveBrandBook(m.id)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div

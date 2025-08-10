@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { File } from "lucide-react";
 
@@ -14,12 +14,16 @@ const acceptedFormats = {
 };
 
 export default function FileUploadField({
-  label = "Brand Book",
+  label = "Brand assets",
   onFileSelect,
   error,
+  multiple = true,
+  selectedLabel,
 }) {
-  const [fileName, setFileName] = useState(null);
-
+  const [localLabel, setLocalLabel] = useState(null);
+  useEffect(() => {
+    if (!selectedLabel) setLocalLabel(null);
+  }, [selectedLabel]);
   const onDrop = useCallback(
     (acceptedFiles, fileRejections) => {
       if (fileRejections.length > 0) {
@@ -27,16 +31,21 @@ export default function FileUploadField({
         return;
       }
 
-      const file = acceptedFiles[0];
-      setFileName(file.name);
-      onFileSelect?.(file);
+      if (multiple) {
+        setLocalLabel(`${acceptedFiles.length} file(s) selected`);
+        onFileSelect?.(acceptedFiles);
+      } else {
+        const file = acceptedFiles[0];
+        setLocalLabel(file?.name);
+        onFileSelect?.(file);
+      }
     },
-    [onFileSelect]
+    [onFileSelect, multiple]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: false,
+    multiple,
     maxSize: MAX_SIZE_BYTES,
     accept: acceptedFormats,
   });
@@ -47,7 +56,7 @@ export default function FileUploadField({
 
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition ${
+        className={`rounded-md border-2 border-dashed p-6 text-center transition cursor-pointer ${
           isDragActive
             ? "border-blue-400 bg-blue-50"
             : "border-gray-300 bg-white"
@@ -55,12 +64,12 @@ export default function FileUploadField({
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center justify-center gap-2 text-gray-600">
-          <File className="text-slate-00" size={56} />
+          <File className="text-slate-600" size={56} />
           <p className="font-medium text-slate-600">
-            {fileName || "Drag and drop a file or click to browse"}
+            {selectedLabel || "Drag & drop files or click to browse"}
           </p>
           <p className="text-sm text-slate-600">
-            PDF, DOCX, image • Max {MAX_SIZE_MB}MB
+            PDF, DOCX, images • Max {MAX_SIZE_MB}MB each
           </p>
         </div>
       </div>
