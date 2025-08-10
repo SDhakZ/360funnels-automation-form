@@ -8,17 +8,21 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ArrowLeft, Copy, Clock } from "lucide-react";
+import { CheckCircle2, Copy, Clock, Check } from "lucide-react";
 
 export default function ThankYou({
   brandName = "",
   submissionId = "",
   onRestart,
 }) {
+  const [copied, setCopied] = React.useState(false);
+
   const copyId = async () => {
     if (!submissionId) return;
     try {
       await navigator.clipboard.writeText(submissionId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500); // reset after 1.5s
     } catch {}
   };
 
@@ -31,7 +35,6 @@ export default function ThankYou({
         className="w-full max-w-xl"
       >
         <Card className="relative overflow-hidden">
-          {/* subtle decorative glow */}
           <div className="absolute rounded-full pointer-events-none -top-24 -right-24 h-60 w-60 bg-green-200/40 blur-3xl" />
           <CardHeader className="flex items-center gap-1 pt-8 pb-2 text-center">
             <CheckCircle2 className="w-12 h-12 text-green-600" />
@@ -58,8 +61,17 @@ export default function ThankYou({
                   <div className="text-muted-foreground">{submissionId}</div>
                 </div>
                 <Button variant="outline" size="sm" onClick={copyId}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2 text-green-600" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy
+                    </>
+                  )}
                 </Button>
               </div>
             ) : null}
