@@ -279,8 +279,9 @@ export default function MultiStepFormWithRedux() {
                 setErrOpen(false);
                 handleSubmit();
               }}
+              disabled={submissionLoading}
             >
-              Try again
+              {submissionLoading ? "Retrying..." : "Try again"}
             </Button>
           </DialogFooter>
         </DialogContent>

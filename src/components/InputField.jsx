@@ -10,6 +10,7 @@ export default function InputField({
   value,
   type = "text",
   error,
+  maxLength,
 }) {
   return (
     <div className="flex flex-col gap-1 ">

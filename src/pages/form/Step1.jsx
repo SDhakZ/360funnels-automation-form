@@ -87,6 +87,7 @@ export default function Step1({
           onFileSelect={onSelectBrandBook}
           multiple
           selectedLabel={selectedLabel}
+          alreadySelectedCount={(data?.brandBookMeta || []).length}
         />
 
         {items.length > 0 && (

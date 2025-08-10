@@ -4,6 +4,20 @@ import { File } from "lucide-react";
 
 const MAX_SIZE_MB = 50;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+const MAX_FILES = 10;
+
+// light extension check (extra safety; server still validates)
+const hasAllowedExt = (file) => {
+  const name = (file.name || "").toLowerCase();
+  return (
+    name.endsWith(".pdf") ||
+    name.endsWith(".docx") ||
+    name.endsWith(".png") ||
+    name.endsWith(".jpg") ||
+    name.endsWith(".jpeg") ||
+    name.endsWith(".webp")
+  );
+};
 
 const acceptedFormats = {
   "application/pdf": [".pdf"],
@@ -19,11 +33,14 @@ export default function FileUploadField({
   error,
   multiple = true,
   selectedLabel,
+  alreadySelectedCount = 0,
 }) {
   const [localLabel, setLocalLabel] = useState(null);
+
   useEffect(() => {
     if (!selectedLabel) setLocalLabel(null);
   }, [selectedLabel]);
+
   const onDrop = useCallback(
     (acceptedFiles, fileRejections) => {
       if (fileRejections.length > 0) {
@@ -31,16 +48,34 @@ export default function FileUploadField({
         return;
       }
 
+      const incoming = multiple ? acceptedFiles : acceptedFiles.slice(0, 1);
+
+      const safe = incoming.filter(hasAllowedExt);
+      if (!safe.length) {
+        alert("Unsupported file type.");
+        return;
+      }
+
+      let allowed = safe;
       if (multiple) {
-        setLocalLabel(`${acceptedFiles.length} file(s) selected`);
-        onFileSelect?.(acceptedFiles);
+        const slots = Math.max(0, MAX_FILES - alreadySelectedCount);
+        if (slots === 0) {
+          alert(`You can upload up to ${MAX_FILES} files.`);
+          return;
+        }
+        allowed = safe.slice(0, slots);
+      }
+
+      if (multiple) {
+        setLocalLabel(`${allowed.length} file(s) selected`);
+        onFileSelect?.(allowed);
       } else {
-        const file = acceptedFiles[0];
-        setLocalLabel(file?.name);
+        const file = allowed[0];
+        setLocalLabel(file?.name || null);
         onFileSelect?.(file);
       }
     },
-    [onFileSelect, multiple]
+    [onFileSelect, multiple, alreadySelectedCount]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -66,10 +101,13 @@ export default function FileUploadField({
         <div className="flex flex-col items-center justify-center gap-2 text-gray-600">
           <File className="text-slate-600" size={56} />
           <p className="font-medium text-slate-600">
-            {selectedLabel || "Drag & drop files or click to browse"}
+            {selectedLabel ||
+              localLabel ||
+              "Drag & drop files or click to browse"}
           </p>
           <p className="text-sm text-slate-600">
-            PDF, DOCX, images • Max {MAX_SIZE_MB}MB each
+            PDF, DOCX, images • Max {MAX_SIZE_MB}MB each • Up to {MAX_FILES}{" "}
+            files
           </p>
         </div>
       </div>
