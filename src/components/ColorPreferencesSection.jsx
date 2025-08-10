@@ -22,7 +22,7 @@ export default function ColorPreferencesSection({
         <Input
           id={name}
           name={name}
-          placeholder="#FFFFFF"
+          placeholder="#FFFFFF (hex code)"
           value={data[name] || ""}
           onChange={handleChange}
           className={`w-full px-10 py-[10px] mt-1 text-sm rounded-md placeholder:text-slate-400 ${

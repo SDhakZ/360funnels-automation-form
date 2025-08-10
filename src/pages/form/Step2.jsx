@@ -25,6 +25,7 @@ export default function Step2({ data, onChange, errors = {} }) {
           placeholder="Enter product name"
           buttonLabel="+ Add product"
           error={errors.bestSellingProducts}
+          autoFocus
         />
       </div>
       <div className={wrapClass("colorPreferences")}>

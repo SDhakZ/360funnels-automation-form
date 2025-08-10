@@ -12,17 +12,20 @@ export default function ListInput({
   placeholder = "Enter item",
   buttonLabel = "+ Add item",
   error,
-  reqired = false,
+  required = false, // <- renamed
+  autoFocus = false, // <- used now
 }) {
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
+  const didFocus = useRef(false);
 
   const handleAdd = () => {
     const trimmed = input.trim();
     if (!trimmed || value.length >= maxItems) return;
     onChange(name, [...value, trimmed]);
     setInput("");
-    setTimeout(() => inputRef.current?.focus(), 0); // delay so ref is valid
+    // keep focusing for quick multiple entries
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const handleRemove = (index) => {
@@ -31,15 +34,18 @@ export default function ListInput({
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  // Auto-focus when rendered and input is available
+  // Focus only when allowed, and only once per mount
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (autoFocus && !didFocus.current) {
+      inputRef.current?.focus();
+      didFocus.current = true;
+    }
+  }, [autoFocus]);
 
   return (
     <div className="w-full space-y-2">
       <label className="text-sm font-medium text-gray-800">
-        {label} {reqired && "*"}
+        {label} {required && "*"}
       </label>
 
       {value.map((item, idx) => (
@@ -67,7 +73,7 @@ export default function ListInput({
             placeholder={placeholder}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1  rounded-md placeholder:text-slate-400"
+            className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1 rounded-md placeholder:text-slate-400"
           />
           <Button
             type="button"

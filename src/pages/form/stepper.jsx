@@ -19,8 +19,8 @@ export default function Stepper({ currentStep, onSelect, allowedStep }) {
         return (
           <React.Fragment key={index}>
             <div
-              className={`flex flex-col items-center cursor-pointer ${
-                disabled ? "opacity-40 cursor-not-allowed" : ""
+              className={`flex flex-col items-center  ${
+                disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => !disabled && onSelect?.(stepNumber)}
             >

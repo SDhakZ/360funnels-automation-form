@@ -1,6 +1,7 @@
 // app/redux/formSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { submitOnboardingForm } from "@/thunk/formThunk";
+
 const initialState = {
   step: 1,
   loading: false,
@@ -8,11 +9,15 @@ const initialState = {
     email: "",
     brandName: "",
     phone: "",
-    countryCode: "", // e.g. 'us'
-    dialCode: "", // e.g. '1'
+    countryCode: "",
+    dialCode: "",
     countryName: "",
     shopifyStoreUrl: "",
-    brandBook: null,
+
+    // 🔄 CHANGED: keep only serializable references
+    brandBookId: null, // UUID for fileVault
+    brandBookName: "", // for UI display
+
     primaryFont: "",
     secondaryFont: "",
     additionalFonts: "",
@@ -53,7 +58,6 @@ const formSlice = createSlice({
       state.step = Math.min(Math.max(action.payload, 1), 3);
     },
     updateField(state, action) {
-      // payload: { stepKey: 'step1', field: 'email', value: 'foo' }
       const { stepKey, field, value } = action.payload;
       if (state[stepKey]) {
         state[stepKey][field] = value;
@@ -63,11 +67,9 @@ const formSlice = createSlice({
       Object.assign(state, initialState);
     },
     hydrate(state, action) {
-      // for restoring from localStorage
       return { ...state, ...action.payload };
     },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(submitOnboardingForm.pending, (state) => {
