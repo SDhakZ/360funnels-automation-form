@@ -14,9 +14,8 @@ const initialState = {
     countryName: "",
     shopifyStoreUrl: "",
 
-    // 🔄 CHANGED: keep only serializable references
-    brandBookId: null, // UUID for fileVault
-    brandBookName: "", // for UI display
+    brandBookId: null,
+    brandBookName: "",
 
     primaryFont: "",
     secondaryFont: "",

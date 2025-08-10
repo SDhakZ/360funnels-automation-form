@@ -29,19 +29,8 @@ export const step1ValidationSchema = Yup.object().shape({
     .trim()
     .required("Required")
     .test("is-valid-url", "Invalid URL", (v) => isLikelyValidUrl(v)),
-  brandBook: Yup.mixed()
-    .test(
-      "fileFormatAndSize",
-      "Only PDF, JPG, PNG allowed and max size 50MB",
-      (file) => {
-        if (!file) return true; // allow empty (optional)
-        const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-        const isValidType = allowedTypes.includes(file.type);
-        const isValidSize = file.size <= 50 * 1024 * 1024;
-        return isValidType && isValidSize;
-      }
-    )
-    .notRequired(),
+  brandBookId: Yup.string().nullable(),
+  brandBookName: Yup.string().trim().nullable(),
 
   primaryFont: Yup.string().trim().required("Required"),
   secondaryFont: Yup.string().trim().required("Required"),

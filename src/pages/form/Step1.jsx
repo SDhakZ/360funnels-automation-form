@@ -4,7 +4,12 @@ import FileUploadField from "@/components/FileUploadField";
 import FontPreferencesSection from "@/components/FontPreferenceSection";
 import ColorPreferencesSection from "@/components/ColorPreferencesSection";
 
-export default function Step1({ data, onChange, errors = {} }) {
+export default function Step1({
+  data,
+  onChange,
+  errors = {},
+  onSelectBrandBook,
+}) {
   const handleChange = (field, value) => {
     onChange(field, value);
   };
@@ -72,8 +77,13 @@ export default function Step1({ data, onChange, errors = {} }) {
         <FileUploadField
           label="Brand Book"
           error={errors.brandBook}
-          onFileSelect={(file) => onChange("brandBook", file)}
+          onFileSelect={onSelectBrandBook}
         />
+        {data.brandBookName ? (
+          <p className="mt-2 text-sm text-slate-600">
+            Selected: {data.brandBookName}
+          </p>
+        ) : null}
       </div>
 
       <div

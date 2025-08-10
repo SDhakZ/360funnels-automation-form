@@ -19,9 +19,55 @@ export default function MultiStepFormWithRedux() {
   const { step, step1, step2, step3 } = useSelector((s) => s.form);
   const [errors, setErrors] = React.useState({});
 
+  // Keep the actual File outside Redux
+  const brandBookFileRef = React.useRef(null);
+
   const handleFieldChange = (stepKey, field, value) => {
     dispatch(updateField({ stepKey, field, value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  // Handle brand book selection: validate + keep metadata in Redux
+  const handleBrandBookSelect = (file) => {
+    // Clear existing error
+    setErrors((prev) => ({ ...prev, brandBook: "" }));
+
+    if (!file) {
+      brandBookFileRef.current = null;
+      dispatch(
+        updateField({ stepKey: "step1", field: "brandBookId", value: null })
+      );
+      dispatch(
+        updateField({ stepKey: "step1", field: "brandBookName", value: "" })
+      );
+      return;
+    }
+
+    const allowed = ["application/pdf", "image/jpeg", "image/png"];
+    const tooBig = file.size > 50 * 1024 * 1024;
+    const badType = !allowed.includes(file.type);
+
+    if (badType || tooBig) {
+      setErrors((prev) => ({
+        ...prev,
+        brandBook: "Only PDF, JPG, PNG allowed and max size 50MB",
+      }));
+      // keep previous selection if any
+      return;
+    }
+
+    brandBookFileRef.current = file;
+    const id = crypto?.randomUUID?.() ?? String(Date.now());
+    dispatch(
+      updateField({ stepKey: "step1", field: "brandBookId", value: id })
+    );
+    dispatch(
+      updateField({
+        stepKey: "step1",
+        field: "brandBookName",
+        value: file.name,
+      })
+    );
   };
 
   // compute allowedStep based on validity of prior steps
@@ -58,7 +104,7 @@ export default function MultiStepFormWithRedux() {
       const errorMap = {};
       if (err.inner) {
         err.inner.forEach((e) => {
-          errorMap[e.path] = e.message;
+          if (e.path) errorMap[e.path] = e.message;
         });
       } else if (err.path) {
         errorMap[err.path] = err.message;
@@ -76,15 +122,23 @@ export default function MultiStepFormWithRedux() {
   const back = () => dispatch(setStep(step - 1));
 
   const handleSubmit = async () => {
-    // final validation of last step
     const isValid = await validateStep();
     if (!isValid) return;
-    dispatch(submitOnboardingForm({ step1, step2, step3 }))
+
+    // Pass the file explicitly to the thunk
+    dispatch(
+      submitOnboardingForm({
+        step1,
+        step2,
+        step3,
+        brandBookFile: brandBookFileRef.current,
+      })
+    )
       .unwrap()
       .then((res) => {
         console.log("Success:", res);
         alert("Form submitted successfully!");
-        // Optionally reset form
+        // Optionally reset form here
       })
       .catch((err) => {
         console.error("Submission error:", err);
@@ -116,6 +170,7 @@ export default function MultiStepFormWithRedux() {
                 data={step1}
                 onChange={(f, v) => handleFieldChange("step1", f, v)}
                 errors={errors}
+                onSelectBrandBook={handleBrandBookSelect}
               />
             </motion.div>
           )}
