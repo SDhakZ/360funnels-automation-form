@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setStep, updateField } from "../../features/formSlice";
+import { setStep, updateField, reset } from "../../features/formSlice";
+import { useNavigate } from "react-router-dom";
 import Stepper from "./Stepper";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -13,61 +14,20 @@ import {
   step3ValidationSchema,
 } from "./validationSchema";
 import { submitOnboardingForm } from "@/thunk/formThunk";
+import ThankYou from "../../components/ThankYou";
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { step, step1, step2, step3 } = useSelector((s) => s.form);
   const [errors, setErrors] = React.useState({});
-
-  // Keep the actual File outside Redux
-  const brandBookFileRef = React.useRef(null);
+  const [submitted, setSubmitted] = React.useState(false);
+  const [lastBrandName, setLastBrandName] = React.useState("");
+  const submissionLoading = useSelector((s) => s.form.loading);
 
   const handleFieldChange = (stepKey, field, value) => {
     dispatch(updateField({ stepKey, field, value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
-  };
-
-  // Handle brand book selection: validate + keep metadata in Redux
-  const handleBrandBookSelect = (file) => {
-    // Clear existing error
-    setErrors((prev) => ({ ...prev, brandBook: "" }));
-
-    if (!file) {
-      brandBookFileRef.current = null;
-      dispatch(
-        updateField({ stepKey: "step1", field: "brandBookId", value: null })
-      );
-      dispatch(
-        updateField({ stepKey: "step1", field: "brandBookName", value: "" })
-      );
-      return;
-    }
-
-    const allowed = ["application/pdf", "image/jpeg", "image/png"];
-    const tooBig = file.size > 50 * 1024 * 1024;
-    const badType = !allowed.includes(file.type);
-
-    if (badType || tooBig) {
-      setErrors((prev) => ({
-        ...prev,
-        brandBook: "Only PDF, JPG, PNG allowed and max size 50MB",
-      }));
-      // keep previous selection if any
-      return;
-    }
-
-    brandBookFileRef.current = file;
-    const id = crypto?.randomUUID?.() ?? String(Date.now());
-    dispatch(
-      updateField({ stepKey: "step1", field: "brandBookId", value: id })
-    );
-    dispatch(
-      updateField({
-        stepKey: "step1",
-        field: "brandBookName",
-        value: file.name,
-      })
-    );
   };
 
   // compute allowedStep based on validity of prior steps
@@ -85,15 +45,9 @@ export default function MultiStepFormWithRedux() {
       2: step2ValidationSchema,
       3: step3ValidationSchema,
     };
-    const stepData = {
-      1: step1,
-      2: step2,
-      3: step3,
-    };
-
+    const stepData = { 1: step1, 2: step2, 3: step3 };
     const currentSchema = schemas[step];
     const currentData = stepData[step];
-
     if (!currentSchema) return true;
 
     try {
@@ -122,30 +76,58 @@ export default function MultiStepFormWithRedux() {
   const back = () => dispatch(setStep(step - 1));
 
   const handleSubmit = async () => {
+    // validate current step as you already do
     const isValid = await validateStep();
     if (!isValid) return;
 
-    // Pass the file explicitly to the thunk
+    const capturedBrandName = step1?.brandName || "";
+
     dispatch(
       submitOnboardingForm({
         step1,
         step2,
-        step3,
-        brandBookFile: brandBookFileRef.current,
+        step3 /*, brandBookFile if you use ref */,
       })
     )
       .unwrap()
       .then((res) => {
-        console.log("Success:", res);
-        alert("Form submitted successfully!");
-        // Optionally reset form here
+        // Prefer a stable ID key from your API response
+        const id = res?.submissionId || res?.id || res?.data?.id || "";
+        navigate("/thank-you", {
+          replace: true,
+          state: {
+            brandName: capturedBrandName,
+            submissionId: id,
+          },
+        });
       })
       .catch((err) => {
         console.error("Submission error:", err);
-        alert("There was an error submitting the form.");
+        alert("There was an error submitting the form."); // or render a toast
       });
   };
 
+  // Optional: navigation action for ThankYou
+  const handleRestart = () => {
+    dispatch(reset());
+    setSubmitted(false);
+    // Move user to step 1 explicitly
+    dispatch(setStep(1));
+  };
+
+  const handleBackHome = () => {
+    // If you have routing, navigate to dashboard/home:
+    // navigate("/dashboard") or router.push("/dashboard");
+    // Fallback: just restart form
+    handleRestart();
+  };
+
+  // ✅ Show ThankYou page after success
+  if (submitted) {
+    return <ThankYou brandName={lastBrandName} onRestart={handleRestart} />;
+  }
+
+  // Default: show the form
   return (
     <div className="max-w-[628px] p-8 mx-auto space-y-6">
       <Stepper
@@ -170,7 +152,6 @@ export default function MultiStepFormWithRedux() {
                 data={step1}
                 onChange={(f, v) => handleFieldChange("step1", f, v)}
                 errors={errors}
-                onSelectBrandBook={handleBrandBookSelect}
               />
             </motion.div>
           )}
@@ -213,6 +194,11 @@ export default function MultiStepFormWithRedux() {
         </Button>
         {step < 3 ? (
           <Button onClick={next}>Continue</Button>
+        ) : submissionLoading ? (
+          <Button disabled>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Submitting...
+          </Button>
         ) : (
           <Button onClick={handleSubmit}>Submit</Button>
         )}

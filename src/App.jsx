@@ -4,6 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import MultiStepForm from "./pages/form/multiStepForm";
 import Onboarding from "./pages/onboarding";
+import ThankYouPage from "./pages/form/ThankYouPage";
 
 config.autoAddCss = false;
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Route path="/" element={<Navigate to="/onboarding" replace />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/form" element={<MultiStepForm />} />
+      <Route path="/thank-you" element={<ThankYouPage />} />
     </Routes>
   );
 }
