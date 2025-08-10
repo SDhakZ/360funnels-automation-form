@@ -21,6 +21,14 @@ const isLikelyValidUrl = (value) => {
   }
 };
 
+const hexColor = Yup.string()
+  .transform((v) => (v && !v.startsWith("#") ? `#${v}` : v))
+  .matches(
+    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/,
+    "Use 3 or 6‑digit hex, e.g. #1A2B3C"
+  )
+  .required("Required");
+
 export const step1ValidationSchema = Yup.object().shape({
   email: Yup.string().trim().email("Invalid email").required("Required"),
   brandName: Yup.string().trim().required("Required"),
@@ -32,8 +40,8 @@ export const step1ValidationSchema = Yup.object().shape({
   brandBookId: Yup.string().nullable(),
   primaryFont: Yup.string().trim().required("Required"),
   secondaryFont: Yup.string().trim().required("Required"),
-  primaryColor: Yup.string().trim().required("Required"),
-  secondaryColor: Yup.string().trim().required("Required"),
+  primaryColor: hexColor,
+  secondaryColor: hexColor,
   otherColors: Yup.string().trim().notRequired(),
   thirdPartyCheckutApps: Yup.string().trim().notRequired(),
   maxDiscount: Yup.string().trim().required("Required"),

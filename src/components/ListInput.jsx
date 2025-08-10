@@ -45,7 +45,7 @@ export default function ListInput({
   return (
     <div className="w-full space-y-2">
       <label className="text-sm font-medium text-gray-800">
-        {label} {required && "*"}
+        {label} {required && <span className="text-red-500">*</span>}{" "}
       </label>
 
       {value.map((item, idx) => (

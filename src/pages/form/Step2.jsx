@@ -16,7 +16,7 @@ export default function Step2({ data, onChange, errors = {} }) {
     <div className="space-y-6">
       <div className={wrapClass("colorPreferences")}>
         <ListInput
-          reqired
+          required
           name="bestSellingProducts"
           label="Best selling products (1–5 products)"
           value={data.bestSellingProducts || []}

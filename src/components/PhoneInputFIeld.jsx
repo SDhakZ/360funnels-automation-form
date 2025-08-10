@@ -11,8 +11,11 @@ export default function PhoneInputField({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-gray-800">{label} *</label>
+      <label className="text-sm font-medium text-gray-800">
+        {label} <span className="text-red-500">*</span>
+      </label>
       <PhoneInput
+        autocompleteSearch
         country={country}
         value={value}
         onChange={(phone, countryData) => {

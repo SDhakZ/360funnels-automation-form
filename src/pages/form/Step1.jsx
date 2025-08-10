@@ -156,6 +156,7 @@ export default function Step1({
           data={data}
           onChange={onChange}
           errors={errors}
+          required
         />
       </div>
 
