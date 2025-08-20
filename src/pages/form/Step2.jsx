@@ -14,7 +14,10 @@ export default function Step2({ data, onChange, errors = {} }) {
     }`;
   return (
     <div className="space-y-6">
-      <div className={wrapClass("colorPreferences")}>
+      <div
+        data-field="bestSellingProducts"
+        className={wrapClass("colorPreferences")}
+      >
         <ListInput
           required
           name="bestSellingProducts"
@@ -40,7 +43,10 @@ export default function Step2({ data, onChange, errors = {} }) {
           error={errors.productsWantToSell}
         />
       </div>
-      <div className={`${wrapClass("colorPreferences")} space-y-6`}>
+      <div
+        data-field="releaseFrequency"
+        className={`${wrapClass("colorPreferences")} space-y-6`}
+      >
         <RadioGroupField
           name="releaseFrequency"
           label="How often do you release new products?"

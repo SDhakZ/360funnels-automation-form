@@ -23,6 +23,73 @@ import {
   step3ValidationSchema,
 } from "./validationSchema";
 import { submitOnboardingForm } from "@/thunk/formThunk";
+const STEP_FIELD_ORDER = {
+  1: [
+    "email",
+    "brandName",
+    "phone",
+    "shopifyStoreUrl",
+    "brandBook",
+    "primaryFont",
+    "secondaryFont",
+    "primaryColor",
+    "secondaryColor",
+    "thirdPartyCheckutApps",
+    "maxDiscount",
+    "brandPotrayal",
+  ],
+  2: [
+    "bestSellingProducts",
+    "productsWantToSell",
+    "releaseFrequency",
+    "realeaseFrequencyAdditionalNotes",
+    "ageRange",
+    "gender",
+    "painPoints",
+    "biggestFear",
+    "customerStory",
+    "brandAdvantages",
+    "brandProblems",
+    "brandFAQs",
+    "brandCompetitors",
+  ],
+  3: ["shippingInfo", "adLibraryLink", "extraNotes"],
+};
+
+// normalize Yup paths like "bestSellingProducts[0]" or "address.city"
+const topKey = (path = "") => path.split(/[.[\]]/).filter(Boolean)[0];
+
+// Find first error by your on-screen order
+const firstErroredKey = (errorsMap, step) => {
+  const keys = Object.keys(errorsMap).map(topKey);
+  const order = STEP_FIELD_ORDER[step] || [];
+  const inOrder = order.find((k) => keys.includes(k));
+  return inOrder || keys[0]; // fallback
+};
+
+// Scroll + focus (supports input, or a wrapper via data-attrs)
+const scrollFocusTo = (name, headerOffset = 72) => {
+  if (!name) return;
+  // try input by name/id
+  let el =
+    document.querySelector(`[name="${name}"]`) || document.getElementById(name);
+
+  // then try wrappers that you’ll add below
+  if (!el) {
+    el =
+      document.querySelector(`[data-field="${name}"]`) ||
+      document.querySelector(`[data-error-keys~="${name}"]`);
+  }
+  if (!el) return;
+
+  const y = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+  window.scrollTo({ top: y, behavior: "smooth" });
+  // focus without breaking scroll
+  const focusable = el.matches("input, select, textarea, [tabindex]")
+    ? el
+    : el.querySelector("input, select, textarea, [tabindex]");
+  setTimeout(() => focusable?.focus?.({ preventScroll: true }), 250);
+};
 
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
@@ -107,29 +174,33 @@ export default function MultiStepFormWithRedux() {
     const stepData = { 1: step1, 2: step2, 3: step3 };
     const currentSchema = schemas[step];
     const currentData = stepData[step];
-    if (!currentSchema) return true;
+    if (!currentSchema) return { ok: true };
 
     try {
       await currentSchema.validate(currentData, { abortEarly: false });
       setErrors({});
-      return true;
+      return { ok: true };
     } catch (err) {
       const errorMap = {};
-      if (err.inner) {
+      if (err.inner?.length) {
         err.inner.forEach((e) => {
-          if (e.path) errorMap[e.path] = e.message;
+          if (e.path && !errorMap[e.path]) errorMap[e.path] = e.message;
         });
       } else if (err.path) {
         errorMap[err.path] = err.message;
       }
       setErrors(errorMap);
-      return false;
+      return { ok: false, first: firstErroredKey(errorMap, step) };
     }
   };
 
   const next = async () => {
-    const isValid = await validateStep();
-    if (isValid) dispatch(setStep(step + 1));
+    const res = await validateStep();
+    if (!res.ok) {
+      requestAnimationFrame(() => scrollFocusTo(res.first));
+      return;
+    }
+    dispatch(setStep(step + 1));
   };
 
   const back = () => dispatch(setStep(step - 1));
@@ -145,6 +216,11 @@ export default function MultiStepFormWithRedux() {
   };
 
   const handleSubmit = async () => {
+    const res = await validateStep();
+    if (!res.ok) {
+      requestAnimationFrame(() => scrollFocusTo(res.first));
+      return;
+    }
     const isValid = await validateStep();
     if (!isValid) return;
 
