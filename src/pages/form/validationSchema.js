@@ -54,7 +54,7 @@ export const step1ValidationSchema = Yup.object().shape({
   primaryColor: hexColor,
   secondaryColor: hexColor,
   otherColors: longText(1000),
-  thirdPartyCheckutApps: longText(500),
+  thirdPartyCheckoutApps: longText(500),
   maxDiscount: shortText(20).required("Required"),
   brandPotrayal: longText(500).required("Required"),
 });

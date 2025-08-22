@@ -34,7 +34,7 @@ const STEP_FIELD_ORDER = {
     "secondaryFont",
     "primaryColor",
     "secondaryColor",
-    "thirdPartyCheckutApps",
+    "thirdPartyCheckoutApps",
     "maxDiscount",
     "brandPotrayal",
   ],

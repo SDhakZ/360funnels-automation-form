@@ -161,15 +161,15 @@ export default function Step1({
         />
       </div>
 
-      <div className={wrapClass("thirdPartyCheckutApps")}>
+      <div className={wrapClass("thirdPartyCheckoutApps")}>
         <InputField
-          name="thirdPartyCheckutApps"
+          name="thirdPartyCheckoutApps"
           label="Third party checkout apps (leave blank if you don't use any)"
           type="text"
           placeholder="e.g. ReCharge, Shop Pay, AfterShip"
-          value={data.thirdPartyCheckutApps || ""}
+          value={data.thirdPartyCheckoutApps || ""}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.thirdPartyCheckutApps}
+          error={errors.thirdPartyCheckoutApps}
         />
       </div>
 

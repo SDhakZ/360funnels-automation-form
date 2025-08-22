@@ -21,7 +21,7 @@ const initialState = {
     primaryColor: "",
     secondaryColor: "",
     otherColors: "",
-    thirdPartyCheckutApps: "",
+    thirdPartyCheckoutApps: "",
     maxDiscount: "",
     brandPotrayal: "",
   },
