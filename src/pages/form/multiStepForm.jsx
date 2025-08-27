@@ -23,6 +23,7 @@ import {
   step3ValidationSchema,
 } from "./validationSchema";
 import { submitOnboardingForm } from "@/thunk/formThunk";
+
 const STEP_FIELD_ORDER = {
   1: [
     "email",
@@ -74,7 +75,6 @@ const scrollFocusTo = (name, headerOffset = 72) => {
   let el =
     document.querySelector(`[name="${name}"]`) || document.getElementById(name);
 
-  // then try wrappers that you’ll add below
   if (!el) {
     el =
       document.querySelector(`[data-field="${name}"]`) ||
