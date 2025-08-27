@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setStep, updateField } from "../../features/formSlice";
 import { useNavigate } from "react-router-dom";
-import Stepper from "./Stepper";
+import StepperLayout from "./StepperLayout";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
@@ -253,7 +253,7 @@ export default function MultiStepFormWithRedux() {
   return (
     <>
       <div className="mx-auto max-w-[628px] space-y-6 p-8">
-        <Stepper
+        <StepperLayout
           currentStep={step}
           onSelect={(n) => {
             if (n <= allowedStep) dispatch(setStep(n));
