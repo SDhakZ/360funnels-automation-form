@@ -31,4 +31,4 @@ jobs:
         run: npm run build
 
       - name: Copy build files to the respective filepath
-        run: cp /root/form-runner/_work/360funnels-automation-form/360funnels-automation-form/dist /var/www/html/form
+        run: cp -r /root/form-runner/_work/360funnels-automation-form/360funnels-automation-form/dist/* /var/www/html/form
