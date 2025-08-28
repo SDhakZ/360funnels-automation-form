@@ -1,18 +1,10 @@
 // app/redux/formThunks.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import api from "@/utils/api";
 
 const API_BASE =
   import.meta?.env?.VITE_API_BASE_URL?.replace(/\/+$/, "") ||
   "http://localhost:3000/v1";
-
-function errorFromResponseStatus(status, bodyText) {
-  try {
-    const j = JSON.parse(bodyText);
-    return j?.message || j?.error || bodyText || `HTTP ${status}`;
-  } catch {
-    return bodyText || `HTTP ${status}`;
-  }
-}
 
 export const submitOnboardingForm = createAsyncThunk(
   "form/submitOnboardingForm",
@@ -46,15 +38,8 @@ export const submitOnboardingForm = createAsyncThunk(
         });
       }
 
-      const res = await fetch(`${API_BASE}/onboarding`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(errorFromResponseStatus(res.status, text));
-      }
-      return await res.json();
+      const res = await api.post("/onboarding", formData);
+      return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
