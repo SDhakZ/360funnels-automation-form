@@ -7,7 +7,7 @@ export default function Step3({ data, onChange, errors = {} }) {
   const handleChange = (field, value) => {
     onChange(field, value);
   };
-
+  // lol
   const wrapClass = (errorKey) =>
     `bg-white outline outline-[1.5px] rounded-[8px] pt-5 pb-7 px-7 ${
       errors[errorKey] ? "outline-red-500" : "outline-slate-300"
