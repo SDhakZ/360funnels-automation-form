@@ -2,46 +2,63 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "@/utils/api";
 
-const API_BASE =
-  import.meta?.env?.VITE_API_BASE_URL?.replace(/\/+$/, "") ||
-  "http://localhost:3000/v1";
+// Utility for better error messages
+function errorFromAxios(err) {
+  if (err.response) {
+    // Server responded with non-2xx status
+    const data = err.response.data;
+    return data?.message || data?.error || `HTTP ${err.response.status}`;
+  } else if (err.request) {
+    // Request was made but no response
+    return "No response from server";
+  } else {
+    // Something else went wrong
+    return err.message;
+  }
+}
 
 export const submitOnboardingForm = createAsyncThunk(
   "form/submitOnboardingForm",
   async ({ step1, step2, step3, brandBookFiles }, thunkAPI) => {
     try {
       const formData = new FormData();
+
+      // Flatten objects so API can parse them
       const { brandBookMeta, brandAssetsMeta, brandBookId, ...step1ForApi } =
         step1;
+
       const appendFlat = (obj) => {
         for (const key in obj) {
           const val = obj[key];
           if (Array.isArray(val)) {
-            // stringify arrays of primitives; avoid nesting complex objects
-            formData.append(`${key}`, JSON.stringify(val));
+            formData.append(key, JSON.stringify(val));
           } else if (val !== null && typeof val === "object") {
-            // avoid sending nested objects directly
-            formData.append(`${key}`, JSON.stringify(val));
+            formData.append(key, JSON.stringify(val));
           } else {
-            formData.append(`${key}`, val ?? "");
+            formData.append(key, val ?? "");
           }
         }
       };
 
-      appendFlat(step1ForApi, "step1");
-      appendFlat(step2, "step2");
-      appendFlat(step3, "step3");
+      appendFlat(step1ForApi);
+      appendFlat(step2);
+      appendFlat(step3);
 
       if (Array.isArray(brandBookFiles)) {
-        brandBookFiles.forEach((file, i) => {
-          formData.append(`brandBook`, file, file.name);
+        brandBookFiles.forEach((file) => {
+          formData.append("brandBook", file, file.name);
         });
       }
 
-      const res = await api.post("/onboarding", formData);
-      return res.data;
+      const { data } = await api.post("/onboarding", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(errorFromAxios(err));
     }
   }
 );
