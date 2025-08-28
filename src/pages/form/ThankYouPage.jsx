@@ -17,7 +17,7 @@ export default function ThankYouPage() {
   const onRestart = () => {
     dispatch(reset());
     dispatch(setStep(1));
-    navigate("/form", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (

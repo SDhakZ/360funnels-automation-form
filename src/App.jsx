@@ -10,9 +10,8 @@ config.autoAddCss = false;
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/onboarding" replace />} />
-      <Route path="/onboarding" element={<Onboarding />} />
-      <Route path="/form" element={<MultiStepForm />} />
+      <Route path="/" element={<Onboarding />} />
+      <Route path="/multistep-form" element={<MultiStepForm />} />
       <Route path="/thank-you" element={<ThankYouPage />} />
     </Routes>
   );
