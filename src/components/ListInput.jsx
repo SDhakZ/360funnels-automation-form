@@ -12,12 +12,21 @@ export default function ListInput({
   placeholder = "Enter item",
   buttonLabel = "+ Add item",
   error,
-  required = false, // <- renamed
-  autoFocus = false, // <- used now
+  required = false,
+  autoFocus = false,
+  tabIndex,
 }) {
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
+  const addButtonRef = useRef(null);
   const didFocus = useRef(false);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      handleAdd();
+    }
+  };
 
   const handleAdd = () => {
     const trimmed = input.trim();
@@ -60,6 +69,7 @@ export default function ListInput({
             className="text-red-500 border border-red-500 hover:bg-red-100"
             onClick={() => handleRemove(idx)}
             type="button"
+            tabIndex={tabIndex ? tabIndex + idx + 1 : undefined}
           >
             <Trash2 size={16} />
           </Button>
@@ -73,12 +83,16 @@ export default function ListInput({
             placeholder={placeholder}
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            tabIndex={tabIndex}
             className="w-full text-sm max-w-[300px] px-4 py-[10px] mt-1 rounded-md placeholder:text-slate-400"
           />
           <Button
+            ref={addButtonRef}
             type="button"
             onClick={handleAdd}
             className="text-white bg-black"
+            tabIndex={tabIndex ? tabIndex + 1 : undefined}
           >
             {buttonLabel}
           </Button>

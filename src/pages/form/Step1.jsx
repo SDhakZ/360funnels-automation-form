@@ -38,6 +38,7 @@ export default function Step1({
           onChange={(e) => handleChange(e.target.name, e.target.value)}
           error={errors.email}
           required
+          tabIndex={1}
         />
       </div>
 
