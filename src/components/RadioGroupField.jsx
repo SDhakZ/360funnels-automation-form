@@ -14,7 +14,7 @@ export default function RadioGroupField({
     <div className="space-y-3">
       {label && (
         <p className="text-base font-medium text-gray-800">
-          {label} {required && "*"}
+          {label} {required && <span className="text-red-500">*</span>}
         </p>
       )}
 

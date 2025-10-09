@@ -16,7 +16,7 @@ export default function Step2({ data, onChange, errors = {} }) {
     <div className="space-y-6">
       <div
         data-field="bestSellingProducts"
-        className={wrapClass("colorPreferences")}
+        className={wrapClass("bestSellingProducts")}
       >
         <ListInput
           required
@@ -31,7 +31,7 @@ export default function Step2({ data, onChange, errors = {} }) {
           autoFocus
         />
       </div>
-      <div className={wrapClass("colorPreferences")}>
+      <div className={wrapClass("productsWantToSell")}>
         <ListInput
           name="productsWantToSell"
           label="Products you want to sell more (if any)"
@@ -45,7 +45,7 @@ export default function Step2({ data, onChange, errors = {} }) {
       </div>
       <div
         data-field="releaseFrequency"
-        className={`${wrapClass("colorPreferences")} space-y-6`}
+        className={`${wrapClass("releaseFrequency")} space-y-6`}
       >
         <RadioGroupField
           name="releaseFrequency"
@@ -73,61 +73,6 @@ export default function Step2({ data, onChange, errors = {} }) {
         />
       </div>
 
-      <div className={`${wrapClass("ageRange")} space-y-6`}>
-        <p className="text-base font-semibold text-gray-800">
-          Ideal Customer Profile *
-        </p>
-
-        <InputField
-          name="ageRange"
-          label="Age range"
-          placeholder="e.g. 25–45, 30+, all age group"
-          value={data.ageRange || ""}
-          onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.ageRange}
-          required
-        />
-
-        <InputField
-          name="gender"
-          label="Gender"
-          placeholder="e.g. Female, Male, Non binary, All"
-          value={data.gender || ""}
-          onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.gender}
-          required
-        />
-
-        <InputField
-          name="painPoints"
-          label="Pain points"
-          placeholder="e.g. Skin irritation, unsure which product fits them, delivery taking too long, price concerns"
-          value={data.painPoints || ""}
-          onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.painPoints}
-          required
-        />
-
-        <InputField
-          name="biggestFear"
-          label="Biggest fear"
-          placeholder="e.g. What if it doesn’t work for me? What if I don’t see results? Can I trust this brand?"
-          value={data.biggestFear || ""}
-          onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.biggestFear}
-          required
-        />
-
-        <InputField
-          name="customerStory"
-          label="Customer Persona Story (optional)"
-          placeholder="e.g. She’s 42, tired of dull, uneven skin, and feels like she’s lost her glow..."
-          value={data.customerStory || ""}
-          onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.customerStory}
-          type="textarea"
-        />
-      </div>
       <div className={wrapClass("brandAdvantages")}>
         <InputField
           name="brandAdvantages"
@@ -137,6 +82,58 @@ export default function Step2({ data, onChange, errors = {} }) {
           onChange={(e) => handleChange(e.target.name, e.target.value)}
           error={errors.brandAdvantages}
           required
+          type="textarea"
+        />
+      </div>
+
+      <div className={`${wrapClass("ageRange")} space-y-6`}>
+        <p className="text-base font-semibold text-gray-800">
+          Ideal Customer Profile
+        </p>
+
+        <InputField
+          name="ageRange"
+          label="Age range"
+          placeholder="e.g. 25–45, 30+, all age group"
+          value={data.ageRange || ""}
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+          error={errors.ageRange}
+        />
+
+        <InputField
+          name="gender"
+          label="Gender"
+          placeholder="e.g. Female, Male, Non binary, All"
+          value={data.gender || ""}
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+          error={errors.gender}
+        />
+
+        <InputField
+          name="painPoints"
+          label="Pain points"
+          placeholder="e.g. Skin irritation, unsure which product fits them, delivery taking too long, price concerns"
+          value={data.painPoints || ""}
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+          error={errors.painPoints}
+        />
+
+        <InputField
+          name="biggestFear"
+          label="Biggest fear"
+          placeholder="e.g. What if it doesn’t work for me? What if I don’t see results? Can I trust this brand?"
+          value={data.biggestFear || ""}
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+          error={errors.biggestFear}
+        />
+
+        <InputField
+          name="customerStory"
+          label="Customer Persona Story (optional)"
+          placeholder="e.g. She’s 42, tired of dull, uneven skin, and feels like she’s lost her glow..."
+          value={data.customerStory || ""}
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+          error={errors.customerStory}
           type="textarea"
         />
       </div>
