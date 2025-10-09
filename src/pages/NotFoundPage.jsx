@@ -12,13 +12,20 @@ export default function NotFoundPage() {
 
         {/* Title */}
         <h1 className="text-2xl font-semibold text-slate-800">
-          This form link isn’t valid anymore
+          This form link isn’t valid
         </h1>
 
         {/* Description */}
         <p className="mt-2 leading-relaxed text-slate-500">
-          The link may have expired, been used already, or is no longer active.
-          Please reach out to our support team to request a new one.
+          The link you followed may be broken, expired, or no longer available.
+          If you believe this is an error, please contact our team at{" "}
+          <a
+            target="_blank"
+            className="text-blue-600 underline"
+            href="mailto:support@the360mails.com"
+          >
+            support@the360mails.com
+          </a>
         </p>
 
         {/* Back CTA */}
