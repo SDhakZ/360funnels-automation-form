@@ -27,14 +27,6 @@ export default function NotFoundPage() {
             support@the360mails.com
           </a>
         </p>
-
-        {/* Back CTA */}
-        <Link
-          to="/"
-          className="px-6 py-3 mt-6 font-medium text-white transition-colors rounded-lg bg-slate-800 hover:bg-slate-700"
-        >
-          Back to Home
-        </Link>
       </div>
     </div>
   );

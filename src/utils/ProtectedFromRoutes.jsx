@@ -30,6 +30,5 @@ export default function ProtectedFormRoute() {
 
   if (status === "invalid") return <Navigate to="/link-expired" replace />;
 
-  // Token valid → render nested routes
   return <Outlet />;
 }
