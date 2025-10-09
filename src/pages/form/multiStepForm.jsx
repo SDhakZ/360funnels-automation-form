@@ -9,6 +9,7 @@ import Step3 from "./Step3";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, AlertCircle } from "lucide-react";
+import { useParams } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -59,7 +60,6 @@ const STEP_FIELD_ORDER = {
 
 // normalize Yup paths like "bestSellingProducts[0]" or "address.city"
 const topKey = (path = "") => path.split(/[.[\]]/).filter(Boolean)[0];
-
 // Find first error by your on-screen order
 const firstErroredKey = (errorsMap, step) => {
   const keys = Object.keys(errorsMap).map(topKey);
@@ -94,7 +94,7 @@ const scrollFocusTo = (name, headerOffset = 72) => {
 export default function MultiStepFormWithRedux() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { token } = useParams();
   const brandBookRef = React.useRef([]); // [{id,file}]
   const { step, step1, step2, step3 } = useSelector((s) => s.form);
   const submissionLoading = useSelector((s) => s.form.loading);
@@ -228,12 +228,18 @@ export default function MultiStepFormWithRedux() {
     const files = brandBookRef.current.map((p) => p.file);
 
     dispatch(
-      submitOnboardingForm({ step1, step2, step3, brandBookFiles: files })
+      submitOnboardingForm({
+        step1,
+        step2,
+        step3,
+        brandBookFiles: files,
+        token,
+      })
     )
       .unwrap()
       .then((res) => {
         const id = res?.submissionId || res?.id || res?.data?.id || "";
-        navigate("/thank-you", {
+        navigate(`/${token}/thank-you`, {
           replace: true,
           state: { brandName: capturedBrandName, submissionId: id },
         });

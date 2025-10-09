@@ -7,19 +7,19 @@ const api = axios.create({
   },
 });
 
-// Add a request interceptor
-/* api.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    // Handle errors during the request configuration
-    return Promise.reject(error);
-  }
-);
- */
+// // Add a request interceptor
+// api.interceptors.request.use(
+//   (config) => {
+//     const accessToken = localStorage.getItem("accessToken");
+//     if (accessToken) {
+//       config.headers.Authorization = `Bearer ${accessToken}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     // Handle errors during the request configuration
+//     return Promise.reject(error);
+//   }
+// );
+
 export default api;

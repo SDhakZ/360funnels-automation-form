@@ -19,7 +19,7 @@ function errorFromAxios(err) {
 
 export const submitOnboardingForm = createAsyncThunk(
   "form/submitOnboardingForm",
-  async ({ step1, step2, step3, brandBookFiles }, thunkAPI) => {
+  async ({ step1, step2, step3, brandBookFiles, token }, thunkAPI) => {
     try {
       const formData = new FormData();
 
@@ -53,6 +53,7 @@ export const submitOnboardingForm = createAsyncThunk(
       const { data } = await api.post("/onboarding", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          token: `Bearer ${token}`,
         },
       });
 

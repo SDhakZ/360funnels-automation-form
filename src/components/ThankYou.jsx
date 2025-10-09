@@ -89,11 +89,11 @@ export default function ThankYou({
             </ul>
           </CardContent>
 
-          <CardFooter className="flex flex-col justify-center gap-3 sm:flex-row">
+          {/* <CardFooter className="flex flex-col justify-center gap-3 sm:flex-row">
             <Button className="w-full sm:w-auto" onClick={onRestart}>
               Start a new submission
             </Button>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </motion.div>
     </div>
