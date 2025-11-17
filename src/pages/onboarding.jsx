@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrgByToken } from "@/thunk/orgThunk";
-import { AlertTriangle } from "lucide-react";
 
 export default function Onboarding() {
   const { token } = useParams();
@@ -11,7 +10,6 @@ export default function Onboarding() {
 
   const { org, loading } = useSelector((state) => state.organization);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [error, setError] = useState(false);
 
   // Fetch org details when page loads
   useEffect(() => {

@@ -5,14 +5,11 @@ import api from "@/utils/api";
 // Utility for better error messages
 function errorFromAxios(err) {
   if (err.response) {
-    // Server responded with non-2xx status
     const data = err.response.data;
     return data?.message || data?.error || `HTTP ${err.response.status}`;
   } else if (err.request) {
-    // Request was made but no response
     return "No response from server";
   } else {
-    // Something else went wrong
     return err.message;
   }
 }
