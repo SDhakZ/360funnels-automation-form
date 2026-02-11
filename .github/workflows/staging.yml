@@ -2,11 +2,11 @@ name: 360funnels Form - CI/CD Pipeline
 
 on:
   push:
-    branches: ["main"]
+    branches: ["staging"]
 
 jobs:
   build:
-    runs-on: production
+    runs-on: staging
     strategy:
       matrix:
         node-version: [20.x]
