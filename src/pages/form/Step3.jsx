@@ -35,7 +35,6 @@ export default function Step3({ data, onChange, errors = {} }) {
           value={data.adLibraryLink || ""}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
           error={errors.adLibraryLink}
-          required
         />
       </div>
 
