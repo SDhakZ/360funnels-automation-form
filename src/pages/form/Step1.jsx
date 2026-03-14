@@ -187,15 +187,15 @@ export default function Step1({
         />
       </div>
 
-      <div className={wrapClass("brandPotrayal")}>
+      <div className={wrapClass("brandPortrayal")}>
         <InputField
-          name="brandPotrayal"
+          name="brandPortrayal"
           label="Words to describe the way you want your brand to be portrayed?"
           type="text"
           placeholder="e.g. casual, funny, relatable, luxury…"
-          value={data.brandPotrayal || ""}
+          value={data.brandPortrayal || ""}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
-          error={errors.brandPotrayal}
+          error={errors.brandPortrayal}
           required
         />
       </div>

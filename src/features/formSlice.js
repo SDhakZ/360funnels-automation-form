@@ -23,7 +23,7 @@ const initialState = {
     otherColors: "",
     thirdPartyCheckoutApps: "",
     maxDiscount: "",
-    brandPotrayal: "",
+    brandPortrayal: "",
   },
   step2: {
     bestSellingProducts: [],

@@ -38,7 +38,7 @@ const STEP_FIELD_ORDER = {
     "secondaryColor",
     "thirdPartyCheckoutApps",
     "maxDiscount",
-    "brandPotrayal",
+    "brandPortrayal",
   ],
   2: [
     "bestSellingProducts",
@@ -103,7 +103,7 @@ export default function MultiStepFormWithRedux() {
   const [errOpen, setErrOpen] = React.useState(false);
   const [errTitle, setErrTitle] = React.useState("Submission failed");
   const [errMessage, setErrMessage] = React.useState(
-    "Something went wrong. Please try again."
+    "Something went wrong. Please try again.",
   );
 
   const handleFieldChange = (stepKey, field, value) => {
@@ -138,7 +138,7 @@ export default function MultiStepFormWithRedux() {
       })),
     ];
     dispatch(
-      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta })
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta }),
     );
   };
 
@@ -146,14 +146,14 @@ export default function MultiStepFormWithRedux() {
     brandBookRef.current = brandBookRef.current.filter((p) => p.id !== id);
     const meta = (step1.brandBookMeta || []).filter((m) => m.id !== id);
     dispatch(
-      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta })
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: meta }),
     );
   };
 
   const handleClearBrandBooks = () => {
     brandBookRef.current = [];
     dispatch(
-      updateField({ stepKey: "step1", field: "brandBookMeta", value: [] })
+      updateField({ stepKey: "step1", field: "brandBookMeta", value: [] }),
     );
   };
 
@@ -210,7 +210,7 @@ export default function MultiStepFormWithRedux() {
     setErrMessage(
       typeof message === "string"
         ? message
-        : message?.message || "Something went wrong. Please try again."
+        : message?.message || "Something went wrong. Please try again.",
     );
     setErrOpen(true);
   };
@@ -234,7 +234,7 @@ export default function MultiStepFormWithRedux() {
         step3,
         brandBookFiles: files,
         token,
-      })
+      }),
     )
       .unwrap()
       .then((res) => {

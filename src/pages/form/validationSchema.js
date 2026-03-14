@@ -5,7 +5,7 @@ const hexColor = Yup.string()
   .transform((v) => (v && !v.startsWith("#") ? `#${v}` : v))
   .matches(
     /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/,
-    "Use 3 or 6‑digit hex, e.g. #1A2B3C"
+    "Use 3 or 6‑digit hex, e.g. #1A2B3C",
   )
   .required("Required");
 
@@ -56,7 +56,7 @@ export const step1ValidationSchema = Yup.object().shape({
   otherColors: longText(1000),
   thirdPartyCheckoutApps: longText(500),
   maxDiscount: shortText(20).required("Required"),
-  brandPotrayal: longText(500).required("Required"),
+  brandPortrayal: longText(500).required("Required"),
 });
 
 export const step2ValidationSchema = Yup.object().shape({
