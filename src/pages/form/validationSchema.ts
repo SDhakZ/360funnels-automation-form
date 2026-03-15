@@ -19,7 +19,7 @@ const requiredText = (max: number) =>
   z.string().trim().min(1, "Required").max(max, `Max ${max} characters`);
 
 const optionalText = (max: number) =>
-  z.string().trim().max(max, `Max ${max} characters`);
+  z.string().trim().max(max, `Max ${max} characters`).optional().default("");
 
 const requiredHexColor = z
   .string()
@@ -40,7 +40,7 @@ export const step1ValidationSchema = z.object({
     .min(1, "Required")
     .refine((value) => isLikelyValidHttpUrl(value), "Invalid URL"),
 
-  brandBookId: z.string().nullable(),
+  brandBookId: z.string().nullable().optional().default(null),
   primaryFont: requiredText(100),
   secondaryFont: requiredText(100),
   primaryColor: requiredHexColor,
@@ -76,6 +76,9 @@ export const step3ValidationSchema = z.object({
     .string()
     .trim()
     .max(2048, "Max 2048 characters")
-    .refine((value) => value === "" || isLikelyValidHttpUrl(value), "Invalid URL"),
+    .refine(
+      (value) => value === "" || isLikelyValidHttpUrl(value),
+      "Invalid URL",
+    ),
   extraNotes: optionalText(2000),
 });
