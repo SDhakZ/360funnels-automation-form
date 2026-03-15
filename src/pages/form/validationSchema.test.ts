@@ -98,6 +98,95 @@ describe("Form Validation Schemas", () => {
       const result = step1ValidationSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
+
+    it("should validate secondary color", () => {
+      const data = { ...validStep1, secondaryColor: "4D5E6F" };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.secondaryColor).toBe("#4D5E6F");
+      }
+    });
+
+    it("should reject invalid secondary color", () => {
+      const data = { ...validStep1, secondaryColor: "notacolor" };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 100 chars for brandName", () => {
+      const data = {
+        ...validStep1,
+        brandName: "A".repeat(101),
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 100 chars for primaryFont", () => {
+      const data = {
+        ...validStep1,
+        primaryFont: "A".repeat(101),
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 100 chars for secondaryFont", () => {
+      const data = {
+        ...validStep1,
+        secondaryFont: "A".repeat(101),
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 20 chars for maxDiscount", () => {
+      const data = {
+        ...validStep1,
+        maxDiscount: "A".repeat(21),
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 500 chars for brandPortrayal", () => {
+      const data = {
+        ...validStep1,
+        brandPortrayal: "A".repeat(501),
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should trim whitespace from hex colors", () => {
+      const data = {
+        ...validStep1,
+        primaryColor: "  #1A2B3C  ",
+        secondaryColor: "  4D5E6F  ",
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.primaryColor).toBe("#1A2B3C");
+        expect(result.data.secondaryColor).toBe("#4D5E6F");
+      }
+    });
+
+    it("should allow optional otherColors field", () => {
+      const data = { ...validStep1, otherColors: "#FF0000 #00FF00" };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should allow optional thirdPartyCheckoutApps field", () => {
+      const data = {
+        ...validStep1,
+        thirdPartyCheckoutApps: "PayPal, Stripe",
+      };
+      const result = step1ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
   });
 
   describe("step2ValidationSchema", () => {
@@ -155,6 +244,91 @@ describe("Form Validation Schemas", () => {
       const result = step2ValidationSchema.safeParse(data);
       expect(result.success).toBe(true);
     });
+
+    it("should reject empty strings in bestSellingProducts", () => {
+      const data = { ...validStep2, bestSellingProducts: ["", "Product2"] };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should allow optional productsWantToSell", () => {
+      const data = {
+        ...validStep2,
+        productsWantToSell: ["Future1", "Future2"],
+      };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should enforce max 5 productsWantToSell", () => {
+      const data = {
+        ...validStep2,
+        productsWantToSell: ["P1", "P2", "P3", "P4", "P5", "P6"],
+      };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should require releaseFrequency", () => {
+      const data = { ...validStep2, releaseFrequency: "" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should require brandAdvantages", () => {
+      const data = { ...validStep2, brandAdvantages: "" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 2000 chars for brandAdvantages", () => {
+      const data = {
+        ...validStep2,
+        brandAdvantages: "A".repeat(2001),
+      };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should allow optional brandProblems", () => {
+      const data = { ...validStep2, brandProblems: "Limited availability" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should allow optional painPoints", () => {
+      const data = { ...validStep2, painPoints: "Customer pain description" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should allow optional customerStory", () => {
+      const data = { ...validStep2, customerStory: "Success story here" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should allow optional brandFAQs", () => {
+      const data = { ...validStep2, brandFAQs: "Q: How? A: Like this" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should allow optional brandCompetitors", () => {
+      const data = { ...validStep2, brandCompetitors: "Competitor A, B, C" };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should trim whitespace from text fields", () => {
+      const data = {
+        ...validStep2,
+        releaseFrequency: "  Weekly  ",
+        brandAdvantages: "  High quality  ",
+      };
+      const result = step2ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
   });
 
   describe("step3ValidationSchema", () => {
@@ -202,6 +376,87 @@ describe("Form Validation Schemas", () => {
       const data = {
         ...validStep3,
         extraNotes: "Some additional notes",
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should enforce max 1500 chars for shippingInfo", () => {
+      const data = {
+        ...validStep3,
+        shippingInfo: "A".repeat(1501),
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 2048 chars for adLibraryLink", () => {
+      const data = {
+        ...validStep3,
+        adLibraryLink: "https://example.com/" + "A".repeat(2050),
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should enforce max 2000 chars for extraNotes", () => {
+      const data = {
+        ...validStep3,
+        extraNotes: "A".repeat(2001),
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should trim whitespace from shippingInfo", () => {
+      const data = {
+        ...validStep3,
+        shippingInfo: "  Worldwide shipping  ",
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.shippingInfo).toBe("Worldwide shipping");
+      }
+    });
+
+    it("should accept various ad library URL formats", () => {
+      const validUrls = [
+        "https://facebook.com/adsmanager",
+        "facebook.com/adsmanager",
+        "https://business.instagram.com/",
+        "tiktok.com/ads",
+      ];
+
+      for (const url of validUrls) {
+        const data = { ...validStep3, adLibraryLink: url };
+        const result = step3ValidationSchema.safeParse(data);
+        expect(result.success).toBe(true);
+      }
+    });
+
+    it("should accept adLibraryLink without protocol", () => {
+      const data = {
+        ...validStep3,
+        adLibraryLink: "facebook.com/library",
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject adLibraryLink with invalid format", () => {
+      const data = {
+        ...validStep3,
+        adLibraryLink: "invalid://url",
+      };
+      const result = step3ValidationSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it("should allow multiple lines in extraNotes", () => {
+      const data = {
+        ...validStep3,
+        extraNotes: "Line 1\nLine 2\nLine 3",
       };
       const result = step3ValidationSchema.safeParse(data);
       expect(result.success).toBe(true);
